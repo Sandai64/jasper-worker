@@ -159,10 +159,10 @@ no_google_business_address/*
 business_list*.csv
 !downloaded_files/.gitkeep
 
-# Credentials
+# Erwangse
 creds.json
-
 chrome-prefs
+ua.json
 
-# Confidential custom code
+# Erwangse/Confidential custom code
 custom/
