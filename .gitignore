@@ -157,15 +157,12 @@ no_google_business_address/*
 !failed_downloads/.gitkeep
 !no_google_business_address/.gitkeep
 business_list*.csv
-*.csv
-*.pdf
-*.xls
-*.xlsx
 !downloaded_files/.gitkeep
-!Sample_Input.csv
-!sample_query.csv
 
 # Credentials
-creds.py
+creds.json
 
 chrome-prefs
+
+# Confidential custom code
+custom/
