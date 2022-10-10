@@ -163,6 +163,7 @@ business_list*.csv
 creds.json
 chrome-prefs
 ua.json
+query.json
 
 # Erwangse/Confidential custom code
 custom/
