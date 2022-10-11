@@ -3,17 +3,39 @@
 
 import os
 import sys
+import random
+import datetime
+import time
+import json
+import glob
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-import random
-import datetime
-import time
-import json
-import glob
+from pathlib import Path
+
+def checkfiles():
+    g_version = Path('VERSION').read_text()
+    g_required_files = [
+        'chromedriver',
+    ]
+
+    def checkfile(filename):
+        if not os.path.isfile(filename):
+            print(f":: File '{ filename }' couldn't be found, aborting.")
+            sys.exit(1)
+
+        print(f":: File '{ filename }' was found, proceeding...")
+
+    print(f'Welcome to Jasper Worker ({ g_version })')
+    print("Starting checks")
+
+    for rf in g_required_files:
+        checkfile(rf)
+
+    print('All OK.')
 
 def get_random_user_agent():
     with open('ua.json', 'r', encoding='utf8') as fp_ua:
