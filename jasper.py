@@ -133,12 +133,13 @@ def run_prompts(prompts_list):
             try:
                 print('\n:: Clearing ql-editor')
                 input_editor = WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'ql-editor')))
-                time.sleep(2)
+                time.sleep(6)
                 input_editor.clear()
                 break
 
             except:
                 print(f'* Warning : Failed to clear ql-editor ! (attempt { try_count })')
+                try_count += 1
                 continue
 
         time.sleep(2)
