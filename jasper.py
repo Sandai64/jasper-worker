@@ -15,7 +15,7 @@ import json
 import glob
 
 def get_random_user_agent():
-    with open('ua.json', 'r') as fp_ua:
+    with open('ua.json', 'r', encoding='utf8') as fp_ua:
         return random.choice(json.load(fp_ua))
 
 def login_jasper():
@@ -46,7 +46,7 @@ def login_jasper():
         print('\n:: Caught TimeoutException, assuming already logged-in.')
         return
 
-    with open('creds.json', 'r') as creds_fp:
+    with open('creds.json', 'r', encoding='utf8') as creds_fp:
         print(':: Submitting username keys...')
         username_value = json.load(creds_fp)['username']
         username_field = browser_handle.find_element(By.ID, 'email')
@@ -87,10 +87,16 @@ def run_prompts(prompts_list):
     browser_handle.get('https://app.jasper.ai/')
 
     print(':: Entering edit page...')
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div[2]/div[2]/div/div[1]/button[2]'))).click()
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="list"]/div[2]/button[1]'))).click()
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div/div[5]/div/div[1]/div[2]/div[2]/button[3]'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div[2]/div[2]/div/div[1]/button[2]'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="list"]/div[2]/button[1]'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div/div[5]/div/div[1]/div[2]/div[2]/button[3]'))).click()
+
+    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[2]/div[2]/div/div[2]/div[1]/button/button'))).click()
+    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+    # WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div[1]/div[1]/div/div/div[5]/div/div[1]/div[2]/div[2]/button[3]'))).click()
+
 
     composed_list = []
 
@@ -135,7 +141,7 @@ if __name__ == '__main__':
     print('\n:: Loading prompts in-memory...\n')
     prompt_list = None
 
-    with open('query.json', 'r') as prompt_fp:
+    with open('query.json', 'r', encoding='utf8') as prompt_fp:
         prompt_list = json.load(prompt_fp)
 
     login_jasper()
@@ -149,9 +155,9 @@ if __name__ == '__main__':
         print('\n:: Saving composed prompts to filesystem...\n')
         os.makedirs('./output/', exist_ok=True)
 
-        with open(f'./output/composed_{now}.csv', 'a') as f_composed:
+        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8') as f_composed:
             for composed_line in composed_list:
-                f_composed.write(f'"{str(composed_line[0]).rstrip()}","{str(composed_line[1]).rstrip()}"\n')
+                f_composed.write(f'"{str(composed_line[0]).rstrip()}","{str(composed_line[1]).strip(composed_line[0]).strip()}"\n')
 
         if len(prompts_block) < 50:
             # No need to wait after finishing the last prompt block
