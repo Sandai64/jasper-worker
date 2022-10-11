@@ -110,19 +110,34 @@ def run_prompts(prompts_list):
     composed_list = []
 
     for prompt_line in prompts_list:
-        print('\n:: Clearing ql-editor')
-        input_editor = WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'ql-editor')))
-        time.sleep(10)
-        input_editor.clear()
-        time.sleep(2)
+        try_count = 0
 
+        while True:
+            if try_count == 20:
+                print('* Aborting script. Too many failed attempts to clear ql-editor ! (Check internet connection ?)')
+                sys.exit(1)
+
+            try:
+                print('\n:: Clearing ql-editor')
+                input_editor = WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'ql-editor')))
+                time.sleep(2)
+                input_editor.clear()
+                break
+
+            except:
+                print(f'* Warning : Failed to clear ql-editor ! (attempt { try_count })')
+                continue
+
+        time.sleep(2)
         print(':: Sending prompt keys')
         input_editor.send_keys(prompt_line)
         time.sleep(2)
 
         print(':: Highlighting the prompt and generating...')
         actions = ActionChains(browser_handle)
-        input_editor.send_keys(Keys.CONTROL, "a")
+
+        input_editor.send_keys(Keys.PAGE_DOWN)
+
         actions.key_down(Keys.CONTROL).send_keys(Keys.ENTER).key_up(Keys.CONTROL).perform()
 
         print(':: Waiting for Jasper to finish...')
