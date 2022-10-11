@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -88,8 +89,23 @@ def run_prompts(prompts_list):
 
     print(':: Entering edit page...')
 
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[2]/div[2]/div/div[2]/div[1]/button/button'))).click()
-    WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+    try_count = 0
+
+    while True:
+        if try_count == 5:
+            print('* Aborting script. Too many failed attempts to enter ql-editor !')
+            sys.exit(1)
+
+        try:
+            print(':: Trying to enter ql-editor...')
+            WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[2]/div[2]/div/div[2]/div[1]/button/button'))).click()
+            WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+            break
+
+        except:
+            print(f'* Warning : Failed to enter ql-editor ! (attempt { try_count })')
+            try_count += 1
+            continue
 
     composed_list = []
 
