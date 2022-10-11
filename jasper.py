@@ -24,7 +24,11 @@ def login_jasper():
     print(':: Logging-in')
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument(f'user-agent={get_random_user_agent()}')
+
+    ua = get_random_user_agent()
+    print(f':: UA = { ua }')
+
+    chrome_options.add_argument(f'user-agent={ ua }')
     chrome_options.add_argument('user-data-dir=./chrome-prefs')
 
     driver_path = glob.glob('./chromedriver*')[0]
@@ -33,10 +37,13 @@ def login_jasper():
     print(':: Starting webdriver Chrome...')
     browser_handle = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
 
-    print(':: Setting random window size...')
-    browser_handle.set_window_size(random.randint(1280, 1920), random.randint(720, 1080))
+    screen_x = random.randint(1280, 1920)
+    screen_y = random.randint(720, 1080)
 
-    print(':: Connecting')
+    print(f':: Setting random window size... ({ screen_x } x { screen_y })')
+    browser_handle.set_window_size(screen_x, screen_y)
+
+    print(':: Connecting...')
     browser_handle.get('https://app.jasper.ai/')
 
     try:
@@ -72,7 +79,11 @@ def run_prompts(prompts_list):
 
     print(':: Initializing webdriver...')
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument(f'user-agent={get_random_user_agent()}')
+
+    ua = get_random_user_agent()
+    print(f':: UA = { ua }')
+
+    chrome_options.add_argument(f'user-agent={ ua }')
     chrome_options.add_argument('user-data-dir=./chrome-prefs')
 
     driver_path = glob.glob('./chromedriver*')[0]
@@ -81,10 +92,12 @@ def run_prompts(prompts_list):
     print(':: Starting webdriver Chrome...')
     browser_handle = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
 
-    print(':: Setting window size...')
-    browser_handle.set_window_size(random.randint(1280, 1920), random.randint(720, 1080))
+    screen_x = random.randint(1280, 1920)
+    screen_y = random.randint(720, 1080)
 
-    print(':: Getting Jasper.ai...')
+    print(f':: Setting random window size... ({ screen_x } x { screen_y })')
+    browser_handle.set_window_size(screen_x, screen_y)
+    print(':: Connecting...')
     browser_handle.get('https://app.jasper.ai/')
 
     print(':: Entering edit page...')
