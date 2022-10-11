@@ -119,8 +119,10 @@ def run_prompts(prompts_list):
 
     print(f':: Setting random window size... ({ screen_x } x { screen_y })')
     browser_handle.set_window_size(screen_x, screen_y)
+
     print(':: Connecting...')
     browser_handle.get('https://app.jasper.ai/')
+    time.sleep(3)
 
     print(':: Entering edit page...')
 
@@ -134,7 +136,11 @@ def run_prompts(prompts_list):
         try:
             print(':: Trying to enter ql-editor...')
             WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[2]/div[2]/div/div[2]/div[1]/button/button'))).click()
+            time.sleep(3)
+
             WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[5]/div/div/div/div/ul/li[1]/div'))).click()
+            time.sleep(3)
+
             break
 
         except:
@@ -193,6 +199,8 @@ def split_list(lst, n):
         yield lst[i:i + n]
 
 if __name__ == '__main__':
+    checkfiles()
+
     print(':: Jasper auto prompt script')
     print('----------------------------')
 
