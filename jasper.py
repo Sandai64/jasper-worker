@@ -150,8 +150,6 @@ def run_prompts(prompts_list):
         print(':: Highlighting the prompt and generating...')
         actions = ActionChains(browser_handle)
 
-        input_editor.send_keys(Keys.PAGE_DOWN)
-
         actions.key_down(Keys.CONTROL).send_keys(Keys.ENTER).key_up(Keys.CONTROL).perform()
 
         print(':: Waiting for Jasper to finish...')
