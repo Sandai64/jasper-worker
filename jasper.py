@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import csv
 import os
 import sys
 import random
@@ -239,15 +240,20 @@ if __name__ == '__main__':
     time_start = datetime.datetime.now().replace(microsecond=0)
     now = datetime.datetime.now().strftime('%Y-%m-%d')
 
+    output_prompts = []
+
     for prompts_block in split_list(prompt_list, 25):
         composed_list = run_prompts(prompts_block)
 
         print('\n:: Saving composed prompts to filesystem...\n')
         os.makedirs('./output/', exist_ok=True)
 
-        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8') as f_composed:
+        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8', newline='') as f_composed:
+            f_composed_writer = csv.writer(f_composed, delimiter=',', quotechar=' | ', quoting=csv.QUOTE_ALL)
+
             for composed_line in composed_list:
-                f_composed.write(f'"{str(composed_line[0]).rstrip()}","{str(composed_line[1]).strip(composed_line[0]).strip()}"\n')
+                # f_composed.write(f'"{str(composed_line[0]).rstrip()}","{str(composed_line[1]).strip(composed_line[0]).strip()}"\n')
+                f_composed_writer.writerow(composed_line)
 
         if len(prompts_block) < 50:
             # No need to wait after finishing the last prompt block
