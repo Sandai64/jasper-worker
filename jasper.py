@@ -181,12 +181,36 @@ def run_prompts(prompts_list):
         actions.key_down(Keys.CONTROL).send_keys(Keys.ENTER).key_up(Keys.CONTROL).perform()
 
         print(':: Waiting for Jasper to finish...')
-        time.sleep(15)
 
-        print(':: Saving composed prompt...')
-        composed_prompt = browser_handle.find_element(By.CLASS_NAME, 'ql-editor')
-        composed_list.append([prompt_line, composed_prompt.text])
-        time.sleep(2)
+        try_count = 0
+        skip_prompt = False
+
+        while True:
+            if try_count == 4:
+                print(f'* Warning : Too many failed attempts to find composed prompt ! (paragraph 3 not found after { try_count } attempts)')
+                print('* Skipping this prompt - perhaps this input contains sensitive material ?')
+
+                skip_prompt = True
+                break
+
+            time.sleep(15)
+
+            try:
+                print(':: Saving composed prompt...')
+                composed_prompt = browser_handle.find_element(By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div/div[3]/div[2]/div/div[3]/div[1]/p[3]').text
+                composed_list.append([prompt_line, composed_prompt])
+
+                break
+
+            except:
+                print(f'* Warning : could not find composed prompt - paragraph 3 not found (attempt { try_count })')
+
+                try_count += 1
+                continue
+
+        if skip_prompt:
+            continue
+
 
     print(':: Closing window.')
     browser_handle.quit()
