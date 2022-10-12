@@ -248,11 +248,10 @@ if __name__ == '__main__':
         print('\n:: Saving composed prompts to filesystem...\n')
         os.makedirs('./output/', exist_ok=True)
 
-        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8', newline='') as f_composed:
-            f_composed_writer = csv.writer(f_composed, delimiter=',', quotechar=' | ', quoting=csv.QUOTE_ALL)
+        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8') as f_composed:
+            f_composed_writer = csv.writer(f_composed, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
             for composed_line in composed_list:
-                # f_composed.write(f'"{str(composed_line[0]).rstrip()}","{str(composed_line[1]).strip(composed_line[0]).strip()}"\n')
                 f_composed_writer.writerow(composed_line)
 
         if len(prompts_block) < 50:
