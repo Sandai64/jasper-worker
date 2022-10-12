@@ -210,6 +210,7 @@ def run_prompts(prompts_list):
                 continue
 
         if skip_prompt:
+            composed_list.append([prompt_line, 'LINE_SKIPPED'])
             continue
 
 
