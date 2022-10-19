@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import csv
+from curses import raw
+from genericpath import isfile
 import os
 import sys
 import random
@@ -15,8 +17,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from pathlib import Path
+from itertools import islice
+from random import randint
 
 class Logger():
     def __init__(self, group_id=0, prompt_id=0, max_group_id=0, max_prompt_id=0) -> None:
@@ -106,7 +109,7 @@ def login_jasper():
         # User will now manually log-in
         # So we'll wait 10 minutes 'till we have a dashboard available
         logger.print_limited(f'Please enter the code sent at { username_value } - waiting 10 minutes for you to manually enter it.\n')
-        WebDriverWait(browser_handle, 600).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div[1]/div/div[2]/div[2]/div/div[1]/button[2]')))
+        WebDriverWait(browser_handle, 600).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div[1]/div/nav[1]/ul[3]/li/span/a')))
 
     logger.print_limited('Found Jasper.ai dashboard')
     logger.print_limited('Closing window.\n')
