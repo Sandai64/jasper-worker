@@ -349,9 +349,9 @@ if __name__ == '__main__':
 
         if len(split_prompts_blocks) > block_idx+1:
             # If not finished
-            hours_waiting = random.randint(1,4)
-            print(f':: Waiting for { hours_waiting } hours...\n')
-            time.sleep(60 * 60 * hours_waiting)
+            minutes_waiting = random.randint(30,120)
+            print(f':: Waiting for { minutes_waiting } minutes...\n')
+            time.sleep(60 * minutes_waiting)
 
     time_end = datetime.datetime.now().replace(microsecond=0)
     runtime = time_end - time_start
