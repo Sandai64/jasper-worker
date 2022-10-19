@@ -175,7 +175,27 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
     composed_list = []
 
+    print(':: Loading raw output file in memory... (if available)')
+
+    output_present = os.path.isfile('./output/composed.csv')
+
     for (idx, prompt_line) in enumerate(prompts_list):
+        force_skip = False
+
+        if output_present == True:
+            with open('./output/composed.csv', 'r', encoding='utf8') as fp_generated:
+                raw_generated = csv.reader(fp_generated, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+
+                for raw_line in raw_generated:
+                    if ((prompt_line in raw_line[0]) and (raw_line[1] != "LINE_SKIPPED")):
+                        # Prompt already generated
+                        force_skip = True
+                        break
+
+        if force_skip == True:
+            print(f'** Skipping already generated line at idx { idx+1 }')
+            continue
+
         logger = Logger(group_id, idx+1, max_group_id, len(prompts_list))
 
         try_count = 0
@@ -300,6 +320,7 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
         time.sleep(random.randint(10, 30))
 
+    fp_generated.close()
     print(':: Closing window.')
     browser_handle.quit()
 
