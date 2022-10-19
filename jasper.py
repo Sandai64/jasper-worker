@@ -298,16 +298,21 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
         composed_list.append([prompt_line, composed_prompt])
 
+        time.sleep(random.randint(10, 30))
 
     print(':: Closing window.')
     browser_handle.quit()
 
     return composed_list
 
-def split_list(lst, n):
-    # Yield successive n-sized chunks from lst.
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+def random_chunk(li, min_chunk=1, max_chunk=3):
+    it = iter(li)
+    while True:
+        nxt = list(islice(it,randint(min_chunk,max_chunk)))
+        if nxt:
+            yield nxt
+        else:
+            break
 
 if __name__ == '__main__':
     checkfiles()
@@ -328,7 +333,7 @@ if __name__ == '__main__':
 
     output_prompts = []
 
-    split_prompts_blocks = list(split_list(prompt_list, 25))
+    split_prompts_blocks = list(random_chunk(prompt_list, 90, 150))
 
     for (block_idx, prompts_block) in enumerate(split_prompts_blocks):
         composed_list = run_prompts(prompts_block, block_idx+1, len(split_prompts_blocks))
@@ -336,7 +341,7 @@ if __name__ == '__main__':
         print('\n:: Saving composed prompts to filesystem...\n')
         os.makedirs('./output/', exist_ok=True)
 
-        with open(f'./output/composed_{now}.csv', 'a', encoding='utf8') as f_composed:
+        with open(f'./output/composed.csv', 'a', encoding='utf8') as f_composed:
             f_composed_writer = csv.writer(f_composed, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
             for composed_line in composed_list:
