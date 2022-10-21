@@ -293,7 +293,9 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
                     except:
                         print('** E: Too many failed attempts to generate prompt in nested condition !')
                         print('      ... Refreshing the page and waiting again did not yield any results.')
-                        sys.exit(1)
+
+                        skip_prompt = True
+                        break
 
             time.sleep(15)
 
