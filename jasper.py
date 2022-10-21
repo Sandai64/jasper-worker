@@ -250,23 +250,20 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
                 except:
                     # We'll need to refresh
-                    print('** W: Editor not stuck, skipping line.')
-                    skip_prompt = True
-
                     # Re-establish a connection
                     print('** W: Editor may be stuck.')
                     print('** W: Loader still present on page - re-establishing connection...')
                     browser_handle.refresh()
 
                     while True:
-                        if try_count == 20:
+                        if try_count == 32:
                             print('** E: Aborting script. Too many failed attempts to clear ql-editor ! (Check internet connection ?)')
                             sys.exit(1)
 
                         try:
                             logger.print_full('Clearing ql-editor...')
                             input_editor = WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'ql-editor')))
-                            time.sleep(6)
+                            time.sleep(10)
                             input_editor.clear()
                             break
 
@@ -296,7 +293,9 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
                     except:
                         print('** E: Too many failed attempts to generate prompt in nested condition !')
                         print('      ... Refreshing the page and waiting again did not yield any results.')
-                        sys.exit(1)
+
+                        skip_prompt = True
+                        break
 
             time.sleep(15)
 
@@ -341,11 +340,41 @@ if __name__ == '__main__':
     print(':: Jasper auto prompt script')
     print('----------------------------')
 
-    print('\n:: Loading prompts in-memory...\n')
-    prompt_list = None
+    print(':: Pruning all LINE_SKIPPED prompts from output...')
 
-    with open('query.json', 'r', encoding='utf8') as prompt_fp:
-        prompt_list = json.load(prompt_fp)
+    fp_output_clean = []
+
+    with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
+        reader = csv.reader(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+
+        for line in reader:
+            if line[1] != 'LINE_SKIPPED':
+                fp_output_clean.append(line)
+
+    with open('./output/composed.csv', 'w', encoding='utf8') as fp_output:
+        writer = csv.writer(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        writer.writerows(fp_output_clean)
+
+    print('\n:: Loading prompts in memory & cleaning up...\n')
+    prompt_list = []
+
+    with open('query.json', 'r', encoding='utf8') as fp_query:
+        with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
+
+            full_query_list = json.load(fp_query)
+            full_output = list(csv.reader(fp_output))
+
+            for raw_query in full_query_list:
+                prompt_already_written = False
+
+                for composed_output in full_output:
+                    if raw_query == composed_output[0]:
+                        prompt_already_written = True
+
+                if not prompt_already_written:
+                    prompt_list.append(raw_query)
+
+    print(f'|| Total unique query number : { len(prompt_list) }')
 
     login_jasper()
 
@@ -368,7 +397,12 @@ if __name__ == '__main__':
             for composed_line in composed_list:
                 f_composed_writer.writerow(composed_line)
 
-        if len(split_prompts_blocks) > block_idx+1:
+        print(f"|| len(composed_list) = { len(composed_list) }")
+        print(f"|| len(prompts_block) = { len(prompts_block) }")
+        print(f"|| perc. of written prompts = { len(composed_list) / len(prompts_block) }")
+
+        # Skip if less than 15% of prompts were actually written
+        if (len(composed_list) / len(prompts_block) >= 0.15):
             # If not finished
             minutes_waiting = random.randint(30,120)
             print(f':: Waiting for { minutes_waiting } minutes...\n')
