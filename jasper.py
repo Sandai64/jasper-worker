@@ -382,7 +382,12 @@ if __name__ == '__main__':
             for composed_line in composed_list:
                 f_composed_writer.writerow(composed_line)
 
-        if len(split_prompts_blocks) > block_idx+1:
+        print(f"|| len(composed_list) = { len(composed_list) }")
+        print(f"|| len(prompts_block) = { len(prompts_block) }")
+        print(f"|| perc. of written prompts = { len(composed_list) / len(prompts_block) }")
+
+        # Skip if less than 15% of prompts were actually written
+        if (len(composed_list) / len(prompts_block) >= 0.15):
             # If not finished
             minutes_waiting = random.randint(30,120)
             print(f':: Waiting for { minutes_waiting } minutes...\n')
