@@ -341,6 +341,21 @@ if __name__ == '__main__':
     print(':: Jasper auto prompt script')
     print('----------------------------')
 
+    print(':: Pruning all LINE_SKIPPED prompts from output...')
+
+    fp_output_clean = []
+
+    with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
+        reader = csv.reader(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+
+        for line in reader:
+            if line[1] != 'LINE_SKIPPED':
+                fp_output_clean.append(line)
+
+    with open('./output/composed.csv', 'w', encoding='utf8') as fp_output:
+        writer = csv.writer(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        writer.writerows(fp_output_clean)
+
     print('\n:: Loading prompts in-memory...\n')
     prompt_list = None
 
