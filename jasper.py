@@ -358,21 +358,21 @@ if __name__ == '__main__':
     print('\n:: Loading prompts in memory & cleaning up...\n')
     prompt_list = []
 
-    with open('query.json', 'r', encoding='utf8') as fp_prompt:
+    with open('query.json', 'r', encoding='utf8') as fp_query:
         with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
 
-            full_prompt_list = json.load(fp_prompt)
-            full_output = csv.reader(fp_output)
+            full_query_list = json.load(fp_query)
+            full_output = list(csv.reader(fp_output))
 
-            for raw_prompt in full_prompt_list:
+            for raw_query in full_query_list:
                 prompt_already_written = False
 
                 for composed_output in full_output:
-                    if raw_prompt == composed_output[0]:
+                    if raw_query == composed_output[0]:
                         prompt_already_written = True
 
                 if not prompt_already_written:
-                    prompt_list.append(raw_prompt)
+                    prompt_list.append(raw_query)
 
     print(f'|| Total unique query number : { len(prompt_list) }')
 
