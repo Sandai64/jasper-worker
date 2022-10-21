@@ -319,7 +319,6 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
         time.sleep(random.randint(10, 30))
 
-    fp_generated.close()
     print(':: Closing window.')
     browser_handle.quit()
 
@@ -344,35 +343,39 @@ if __name__ == '__main__':
 
     fp_output_clean = []
 
-    with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
-        reader = csv.reader(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-
-        for line in reader:
-            if line[1] != 'LINE_SKIPPED':
-                fp_output_clean.append(line)
-
-    with open('./output/composed.csv', 'w', encoding='utf8') as fp_output:
-        writer = csv.writer(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-        writer.writerows(fp_output_clean)
-
-    print('\n:: Loading prompts in memory & cleaning up...\n')
-    prompt_list = []
-
-    with open('query.json', 'r', encoding='utf8') as fp_query:
+    if os.path.isfile('./output/composed.csv'):
         with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
+            reader = csv.reader(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
-            full_query_list = json.load(fp_query)
-            full_output = list(csv.reader(fp_output))
+            for line in reader:
+                if line[1] != 'LINE_SKIPPED':
+                    fp_output_clean.append(line)
 
-            for raw_query in full_query_list:
-                prompt_already_written = False
+        with open('./output/composed.csv', 'w', encoding='utf8') as fp_output:
+            writer = csv.writer(fp_output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+            writer.writerows(fp_output_clean)
 
-                for composed_output in full_output:
-                    if raw_query == composed_output[0]:
-                        prompt_already_written = True
+        print('\n:: Loading prompts in memory & cleaning up...\n')
+        prompt_list = []
 
-                if not prompt_already_written:
-                    prompt_list.append(raw_query)
+        with open('query.json', 'r', encoding='utf8') as fp_query:
+            with open('./output/composed.csv', 'r', encoding='utf8') as fp_output:
+
+                full_query_list = json.load(fp_query)
+                full_output = list(csv.reader(fp_output))
+
+                for raw_query in full_query_list:
+                    prompt_already_written = False
+
+                    for composed_output in full_output:
+                        if raw_query == composed_output[0]:
+                            prompt_already_written = True
+
+                    if not prompt_already_written:
+                        prompt_list.append(raw_query)
+    else:
+        with open('./query.json', 'r', encoding='utf8') as fp_query:
+            prompt_list = json.load(fp_query)
 
     print(f'|| Total unique query number : { len(prompt_list) }')
 
