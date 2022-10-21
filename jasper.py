@@ -250,23 +250,20 @@ def run_prompts(prompts_list: list, group_id: int, max_group_id: int) -> list:
 
                 except:
                     # We'll need to refresh
-                    print('** W: Editor not stuck, skipping line.')
-                    skip_prompt = True
-
                     # Re-establish a connection
                     print('** W: Editor may be stuck.')
                     print('** W: Loader still present on page - re-establishing connection...')
                     browser_handle.refresh()
 
                     while True:
-                        if try_count == 20:
+                        if try_count == 32:
                             print('** E: Aborting script. Too many failed attempts to clear ql-editor ! (Check internet connection ?)')
                             sys.exit(1)
 
                         try:
                             logger.print_full('Clearing ql-editor...')
                             input_editor = WebDriverWait(browser_handle, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'ql-editor')))
-                            time.sleep(6)
+                            time.sleep(10)
                             input_editor.clear()
                             break
 
